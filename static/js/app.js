@@ -34,10 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Bind Event Listeners
+    const exportCsvBtn = document.getElementById('export-csv-btn');
     if (refreshBtn) refreshBtn.addEventListener('click', () => fetchReleaseNotes(true));
     if (searchInput) searchInput.addEventListener('input', handleSearch);
     if (tweetTextarea) tweetTextarea.addEventListener('input', updateCharCount);
     if (tweetBtn) tweetBtn.addEventListener('click', triggerTweet);
+    if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportToCSV);
     
     // Initial Fetch (cached)
     fetchReleaseNotes(false);
@@ -216,7 +218,7 @@ function filterAndRender() {
             
             // Render Entry Date Card
             html += `
-                <div class="timeline-card fade-in-up" style="animation-delay: ${entryIndex * 0.05}s">
+                <div class="timeline-card fade-in-up" id="card-${entryIndex}" style="animation-delay: ${entryIndex * 0.05}s">
                     <div class="card-header">
                         <div class="card-date-group">
                             <div class="card-date-icon">
@@ -224,9 +226,14 @@ function filterAndRender() {
                             </div>
                             <h2 class="card-date">${entry.title}</h2>
                         </div>
-                        <a href="${entry.link}" target="_blank" class="card-source-link">
-                            Source Doc <i data-lucide="external-link"></i>
-                        </a>
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <button class="btn-action" onclick="copyDayUpdates('${entryIndex}', \`${escapeJSString(entry.title)}\`)" style="color: var(--text-secondary);" title="Copy all updates for this day">
+                                <i data-lucide="copy"></i> Copy Day
+                            </button>
+                            <a href="${entry.link}" target="_blank" class="card-source-link">
+                                Source Doc <i data-lucide="external-link"></i>
+                            </a>
+                        </div>
                     </div>
                     <div class="card-updates-list">
             `;
@@ -251,7 +258,7 @@ function filterAndRender() {
                             ${up.html}
                         </div>
                         <div class="update-actions">
-                            <button class="btn-action" onclick="copyUpdateText(\`${escapeJSString(up.text)}\`)">
+                            <button class="btn-action" onclick="copyUpdateText('${up.id}', \`${escapeJSString(up.text)}\`)">
                                 <i data-lucide="copy"></i> Copy Clean Text
                             </button>
                             <button class="btn-action btn-tweet-direct" onclick="quickTweet('${entry.title}', '${up.type}', \`${escapeJSString(up.text)}\`, '${up.link}')">
@@ -430,14 +437,127 @@ function quickTweet(date, type, rawText, link) {
     showToast('Redirected to Quick Tweet!', 'info');
 }
 
-// Copy to clipboard
-function copyUpdateText(text) {
+// Copy to clipboard with visual checkmark feedback
+function copyUpdateText(id, text) {
     navigator.clipboard.writeText(text).then(() => {
         showToast('Text copied to clipboard!', 'success');
+        
+        // Find the specific button in the DOM and trigger feedback
+        const block = document.getElementById(`block-${id}`);
+        if (block) {
+            const btn = block.querySelector('.btn-action:first-child');
+            if (btn) {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check-circle" style="color: var(--color-feature); width: 14px; height: 14px;"></i> Copied!`;
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    lucide.createIcons();
+                }, 2000);
+            }
+        }
     }).catch(err => {
         console.error('Could not copy text: ', err);
         showToast('Failed to copy text', 'warning');
     });
+}
+
+// Copy all updates under a specific date
+function copyDayUpdates(cardIndex, dateTitle) {
+    const entry = releaseNotes.find(e => e.title === dateTitle);
+    if (!entry || !entry.updates) return;
+    
+    // Combine text from all updates on this day
+    const combinedText = entry.updates.map(up => `[${up.type}] ${up.text}`).join('\n\n');
+    
+    navigator.clipboard.writeText(combinedText).then(() => {
+        showToast(`Copied all updates for ${dateTitle}!`, 'success');
+        
+        // Find copy day button in DOM and trigger feedback
+        const card = document.getElementById(`card-${cardIndex}`);
+        if (card) {
+            const copyBtn = card.querySelector('.card-header button.btn-action');
+            if (copyBtn) {
+                const originalHtml = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<i data-lucide="check-circle" style="color: var(--color-feature); width: 14px; height: 14px;"></i> Copied!`;
+                lucide.createIcons();
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHtml;
+                    lucide.createIcons();
+                }, 2000);
+            }
+        }
+    }).catch(err => {
+        console.error('Could not copy day text: ', err);
+        showToast('Failed to copy text', 'warning');
+    });
+}
+
+// Export currently filtered releases to a CSV file client-side
+function exportToCSV() {
+    const csvRows = [];
+    csvRows.push(['Date', 'Type', 'Content', 'Link']); // CSV Header
+    
+    let exportCount = 0;
+    
+    // Loop entries and updates matching active filters & query
+    releaseNotes.forEach(entry => {
+        const matchingUpdates = (entry.updates || []).filter(up => {
+            const type = up.type.toLowerCase();
+            let matchesType = false;
+            
+            if (activeFilter === 'all') matchesType = true;
+            else if (activeFilter === 'feature' && type.includes('feature')) matchesType = true;
+            else if (activeFilter === 'announcement' && type.includes('announcement')) matchesType = true;
+            else if (activeFilter === 'issue' && type.includes('issue')) matchesType = true;
+            else if (activeFilter === 'deprecation' && type.includes('deprecation')) matchesType = true;
+            
+            if (!matchesType) return false;
+            
+            if (searchQuery) {
+                const textMatch = up.text.toLowerCase().includes(searchQuery);
+                const typeMatch = up.type.toLowerCase().includes(searchQuery);
+                const dateMatch = entry.title.toLowerCase().includes(searchQuery);
+                return textMatch || typeMatch || dateMatch;
+            }
+            return true;
+        });
+        
+        matchingUpdates.forEach(up => {
+            const escapedText = up.text.replace(/"/g, '""'); // Escape inner quotes
+            csvRows.push([
+                `"${entry.title}"`,
+                `"${up.type}"`,
+                `"${escapedText}"`,
+                `"${up.link}"`
+            ]);
+            exportCount++;
+        });
+    });
+    
+    if (exportCount === 0) {
+        showToast('No updates to export in current view.', 'warning');
+        return;
+    }
+    
+    // Convert array to CSV string
+    const csvContent = csvRows.map(e => e.join(",")).join("\r\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        const timestamp = new Date().toISOString().slice(0, 10);
+        link.setAttribute("download", `bigquery_release_notes_${timestamp}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast(`Exported ${exportCount} updates to CSV!`, 'success');
+    } else {
+        showToast('CSV export not supported in this browser.', 'warning');
+    }
 }
 
 // Render error state

@@ -66,9 +66,15 @@
                         <input type="text" id="search-input" class="search-input" placeholder="Search release notes by keyword, date, or feature type...">
                     </div>
                     
-                    <div class="filter-pills" id="filter-pills">
-                        <!-- Filled dynamically by JavaScript -->
-                        <button class="filter-pill active" data-type="all">All</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.75rem; width: 100%;">
+                        <div class="filter-pills" id="filter-pills">
+                            <!-- Filled dynamically by JavaScript -->
+                            <button class="filter-pill active" data-type="all">All</button>
+                        </div>
+                        <button class="btn-refresh" id="export-csv-btn" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.25); color: var(--color-feature); padding: 0.4rem 1rem; border-radius: 99px; font-size: 0.85rem;" title="Export currently filtered updates to CSV">
+                            <i data-lucide="download"></i>
+                            <span>Export CSV</span>
+                        </button>
                     </div>
                 </div>
                 
