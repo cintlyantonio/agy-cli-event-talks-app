@@ -946,3 +946,162 @@ header {
         justify-content: space-between;
     }
 }
+
+/* ==========================================
+   Light Mode Theme Overrides
+   ========================================== */
+body.light-theme {
+    --bg-dark: #f1f5f9; /* Slate 100 */
+    --panel-bg: rgba(255, 255, 255, 0.75); /* transparent white */
+    --panel-border: rgba(15, 23, 42, 0.08); /* thin dark border */
+    --panel-border-hover: rgba(15, 23, 42, 0.15);
+    
+    /* Brand Accent Colors */
+    --primary: #4f46e5; /* darker indigo */
+    --primary-glow: rgba(79, 70, 229, 0.08);
+    
+    /* GCP & Release Type Badges */
+    --color-feature: #047857; /* darker green for contrast */
+    --color-feature-bg: rgba(4, 120, 87, 0.08);
+    --color-announcement: #1d4ed8;
+    --color-announcement-bg: rgba(29, 78, 216, 0.08);
+    --color-issue: #b45309;
+    --color-issue-bg: rgba(180, 83, 9, 0.08);
+    --color-deprecation: #b91c1c;
+    --color-deprecation-bg: rgba(185, 28, 28, 0.08);
+    --color-general: #475569;
+    --color-general-bg: rgba(71, 85, 105, 0.08);
+    
+    /* Text Colors */
+    --text-primary: #0f172a; /* slate-900 */
+    --text-secondary: #334155; /* slate-700 */
+    --text-muted: #64748b; /* slate-500 */
+}
+
+/* Light Theme Component Tweaks */
+body.light-theme header {
+    background: rgba(241, 245, 249, 0.8);
+    border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-theme .logo-section h1 {
+    background: linear-gradient(to right, #0f172a, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .logo-section span {
+    background: rgba(79, 70, 229, 0.08);
+    color: #4f46e5;
+    border-color: rgba(79, 70, 229, 0.15);
+}
+
+body.light-theme .status-badge {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .btn-refresh {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.06);
+    color: var(--text-primary);
+}
+
+body.light-theme .btn-refresh:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+body.light-theme .search-input {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(15, 23, 42, 0.1);
+    color: var(--text-primary);
+}
+
+body.light-theme .search-input:focus {
+    background: #ffffff;
+    border-color: var(--primary);
+}
+
+body.light-theme .filter-pill {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light-theme .filter-pill:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .filter-pill.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+body.light-theme .timeline-card {
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+body.light-theme .timeline-card:hover {
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+body.light-theme .card-date-icon {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .update-block {
+    background: rgba(0, 0, 0, 0.01);
+    border-color: rgba(0, 0, 0, 0.03);
+}
+
+body.light-theme .update-block:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .update-block.selected-for-tweet {
+    background: rgba(29, 155, 240, 0.03);
+    border-color: rgba(29, 155, 240, 0.3);
+}
+
+body.light-theme .update-content code {
+    background: rgba(15, 23, 42, 0.05);
+    color: #0f172a;
+}
+
+body.light-theme .composer-textarea {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(15, 23, 42, 0.1);
+    color: var(--text-primary);
+}
+
+body.light-theme .composer-textarea:focus {
+    border-color: var(--twitter-blue);
+}
+
+body.light-theme .composer-instruction {
+    background: rgba(0, 0, 0, 0.01);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .progress-ring-circle-bg {
+    stroke: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .selected-details-card {
+    background: rgba(0, 0, 0, 0.01);
+}
+
+body.light-theme .toast {
+    background: rgba(255, 255, 255, 0.95);
+    color: #0f172a;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+}
+
+body.light-theme .glow-1 {
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, rgba(99, 102, 241, 0) 70%);
+}
+
+body.light-theme .glow-2 {
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.04) 0%, rgba(16, 185, 129, 0) 70%);
+}

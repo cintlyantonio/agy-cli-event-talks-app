@@ -33,8 +33,29 @@ document.addEventListener('DOMContentLoaded', () => {
         charProgressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
     }
     
-    // Bind Event Listeners
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const exportCsvBtn = document.getElementById('export-csv-btn');
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        if (themeToggleBtn) {
+            themeToggleBtn.innerHTML = `<i data-lucide="moon"></i>`;
+        }
+    }
+    
+    // Bind Event Listeners
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const isLight = document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            themeToggleBtn.innerHTML = isLight ? `<i data-lucide="moon"></i>` : `<i data-lucide="sun"></i>`;
+            lucide.createIcons();
+            showToast(`Theme switched to ${isLight ? 'Light' : 'Dark'} Mode`, 'info');
+        });
+    }
+    
     if (refreshBtn) refreshBtn.addEventListener('click', () => fetchReleaseNotes(true));
     if (searchInput) searchInput.addEventListener('input', handleSearch);
     if (tweetTextarea) tweetTextarea.addEventListener('input', updateCharCount);
