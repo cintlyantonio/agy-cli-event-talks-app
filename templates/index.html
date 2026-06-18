@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Radar</title>
+    <meta name="description" content="Stay updated with BigQuery release notes and tweet highlights directly from a beautiful dark-mode interface.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Lucide Icons Library -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <!-- Ambient Background Blobs -->
+    <div class="ambient-glows">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header>
+        <div class="app-container header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i data-lucide="database"></i>
+                </div>
+                <div>
+                    <h1>BigQuery Release Radar</h1>
+                </div>
+                <span>Feed Viewer</span>
+            </div>
+            
+            <div class="action-section">
+                <div class="status-badge" id="connection-status">
+                    <div class="status-dot"></div>
+                    <span>Live feed connected</span>
+                </div>
+                
+                <button class="btn-refresh" id="refresh-btn" title="Fetch fresh release notes">
+                    <i data-lucide="refresh-cw"></i>
+                    <span>Refresh</span>
+                </button>
+                
+                <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; text-align: right;">
+                    <span>Last Fetched</span>
+                    <strong id="last-updated-time" style="color: var(--text-secondary);">--:--:--</strong>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-container">
+        <div class="dashboard-grid">
+            
+            <!-- Feed Column (Left) -->
+            <div class="feed-section">
+                <!-- Filters & Search Card -->
+                <div class="filter-card">
+                    <div class="search-box">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="search-input" class="search-input" placeholder="Search release notes by keyword, date, or feature type...">
+                    </div>
+                    
+                    <div class="filter-pills" id="filter-pills">
+                        <!-- Filled dynamically by JavaScript -->
+                        <button class="filter-pill active" data-type="all">All</button>
+                    </div>
+                </div>
+                
+                <!-- Timeline Feed -->
+                <div class="release-timeline" id="timeline-container">
+                    <!-- Cards will be populated dynamically -->
+                    <div class="loading-card">
+                        <div class="loading-spinner-large"></div>
+                        <p>Loading release notes feed...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Composer Column (Right Sidebar) -->
+            <div class="composer-sidebar">
+                <!-- Tweet Composer Card -->
+                <div class="composer-card">
+                    <div class="composer-header">
+                        <i data-lucide="twitter" style="width: 20px; height: 20px;"></i>
+                        <h2 class="composer-title">Tweet Composer</h2>
+                    </div>
+                    
+                    <div class="composer-instruction">
+                        Select any specific update from the feed on the left to draft a pre-formatted tweet.
+                    </div>
+                    
+                    <!-- Meta information box -->
+                    <div class="selected-details-card" id="selected-detail-panel">
+                        <div class="selected-meta-title">No Update Selected</div>
+                        <p>Select an update from the feed to draft your tweet.</p>
+                    </div>
+                    
+                    <div class="composer-textarea-container">
+                        <textarea id="tweet-textarea" class="composer-textarea" placeholder="Your draft will appear here..." disabled></textarea>
+                    </div>
+                    
+                    <div class="composer-footer">
+                        <div class="character-tracker">
+                            <div class="progress-ring-container">
+                                <svg width="24" height="24">
+                                    <circle class="progress-ring-circle-bg" cx="12" cy="12" r="9"></circle>
+                                    <circle id="char-progress-circle" class="progress-ring-circle" cx="12" cy="12" r="9"></circle>
+                                </svg>
+                            </div>
+                            <span class="char-count" id="char-count-text">0/280</span>
+                        </div>
+                        
+                        <button class="btn-tweet-action" id="tweet-btn" disabled>
+                            <i data-lucide="send"></i> Post to X
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Toast Alerts Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Client Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
